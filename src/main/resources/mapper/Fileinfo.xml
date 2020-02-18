@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.FileDao">
+    <select id="findFileById" resultMap="FileinfoMap" parameterType="int">
+        select * from fileinfo where fileid = #{_parameter};
+    </select>
+
+    <resultMap id="FileinfoMap" type="Fileinfo">
+        <collection property="userinfo" column="uid=uid" select="mapper.UserDao.searchById">
+
+        </collection>
+    </resultMap>
+
+    <select id="findFileByUid" resultType="Fileinfo" parameterType="int">
+        select * from fileinfo where uid = #{_parameter};
+    </select>
+
+<!--待条件查询所有文件-->
+    <select id="findFileByCondition" resultType="Fileinfo" parameterType="map">
+        select * from fileinfo
+        <where>
+            <if test="startdate != null">
+                and filedate &gt;= #{startdate}
+            </if>
+            <if test="enddate != null">
+                and filedate &lt;= #{enddate}
+            </if>
+            <if test="filetype != null">
+                and filetype = #{filetype}
+            </if>
+            <if test="filename != null">
+                and filename like #{filename}
+            </if>
+            <if test="filestate != null">
+                and filestate = #{filestate}
+            </if>
+            <if test="uaccount != null">
+                and uaccount like #{uaccount}
+            </if>
+        </where>
+    </select>
+
+    <update id="editFileinfo" parameterType="map">
+        update fileinfo set
+
+        <foreach collection="_parameter" item="val"  index="key" separator=",">
+            ${key} = #{val}
+        </foreach>
+
+        where fileid = #{fileid}
+
+    </update>
+
+    <select id="findFileCountByCondition" resultType="int" parameterType="map">
+        select count(*) from fileinfo
+        <where>
+            <if test="startdate != null">
+                and filedate &gt;= #{startdate}
+            </if>
+            <if test="enddate != null">
+                and filedate &lt;= #{enddate}
+            </if>
+            <if test="filetype != null">
+                and filetype = #{filetype}
+            </if>
+            <if test="filename != null">
+                and filename like #{filename}
+            </if>
+            <if test="filestate != null">
+                and filestate = #{filestate}
+            </if>
+            <if test="uaccount != null">
+                and uaccount like #{uaccount}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addFile" parameterType="map">
+        <selectKey keyProperty="fileid" resultType="int" order="AFTER">
+            select last_insert_id();
+        </selectKey>
+
+        insert into fileinfo
+        <foreach collection="_parameter" item="val" index="key" open="(" close=")" separator=",">
+            ${key}
+        </foreach>
+        value
+        <foreach collection="_parameter" item="val" index="key" open="(" close=")" separator=",">
+            #{val}
+        </foreach>
+
+    </insert>
+    <insert id="addFile2" parameterType="Fileinfo">
+        <selectKey keyProperty="fileid" resultType="int" order="AFTER">
+            select last_insert_id();
+        </selectKey>
+
+        insert into fileinfo
+        <foreach collection="map" item="val" index="key" open="(" close=")" separator=",">
+            ${key}
+        </foreach>
+        value
+<!--        <foreach collection="map" item="val2" index="key" open="(" close=")" separator=",">-->
+<!--            #{val2}-->
+<!--        </foreach>-->
+
+    </insert>
+
+</mapper>
