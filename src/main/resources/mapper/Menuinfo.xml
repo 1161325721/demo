@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.demo.mapper.MenuDao">
+
+	<select id="findRoleMenuList" resultType="map" parameterType="int">
+		SELECT * FROM rolemenu,menu WHERE rolemenu.menuid = menu.menuid
+		and rolemenu.roleid = #{_parameter}
+	</select>
+
+	<select id="findRoleMenu" resultType="map" parameterType="int">
+		SELECT c.rolemunuid 'value',d.menuid,d.menuname title FROM
+		(SELECT a.rolemunuid rolemunuid,b.* FROM rolemenu a,menu b WHERE a.menuid = b.menuid and a.roleid = #{_parameter}) c
+		right JOIN menu d
+		on c.menuid = d.menuid
+	</select>
+
+	<insert id="addRoleMenu" parameterType="map">
+		insert into rolemenu (roleid,menuid) value
+		<foreach collection="addList" item="val" index="key" separator=",">
+			(#{roleid},#{val})
+		</foreach>
+
+	</insert>
+
+	<delete id="delRoleMenu" parameterType="map">
+<!--		delete from rolemenu-->
+<!--		<foreach collection="delList" item="val" index="key" open="" close=";" separator=";">-->
+<!--			 where roleid = #{roleid} and menuid = #{val}-->
+<!--		</foreach>-->
+
+
+		delete from rolemenu
+		<where>
+			and roleid = #{roleid}
+			and menuid in
+			<foreach collection="delList" item="val" index="key" open="(" close=")" separator=",">
+				#{val}
+			</foreach>
+		</where>
+
+
+	</delete>
+
+</mapper>
+	

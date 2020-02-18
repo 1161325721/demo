@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.demo.mapper.UserDao">
+
+
+	<select id="searchMangerByAcc" resultType="Manger" parameterType="Manger">
+		select * from manger
+		<where>
+			<if test="manaccount != null">
+				and manaccount=#{manaccount}
+			</if>
+		</where>
+	</select>
+
+	<insert id="addUser" parameterType="Userinfo" keyProperty="uid" useGeneratedKeys="true">
+		insert into
+		userinfo(uid,uaccount,upassword,usex,uocc,uedu,uphone,uemail,ustate)
+		values(#{uid},#{uaccount},#{upassword},#{usex},#{uocc},#{uedu},#{uphone},#{uemail},#{ustate})
+	</insert>
+
+
+	<select id="searchByAcc" resultType="Userinfo" parameterType="Userinfo">
+		select * from userinfo
+		<where>
+			<if test="uaccount != null">
+				and uaccount=#{uaccount}
+			</if>
+		</where>
+	</select>
+
+	<select id="searchById" resultType="Userinfo" parameterType="Userinfo">
+		select * from userinfo
+		<where>
+			<if test="uid != null">
+				and uid=#{uid}
+			</if>
+		</where>
+	</select>
+
+	<select id="searchUserListByCondition" resultType="Userinfo" parameterType="map">
+		select * from userinfo
+		<where>
+			<if test="uid != null">
+				and uid = #{uid}
+			</if>
+			<if test="uaccount != null">
+				and uaccount like #{uaccount}
+			</if>
+		</where>
+
+	</select>
+
+	<select id="searchUserCountByCondition" resultType="int" parameterType="map">
+		select count(*) from userinfo
+		<where>
+			<if test="uid != null">
+				and uid = #{uid}
+			</if>
+			<if test="uaccount != null">
+				and uaccount like #{uaccount}
+			</if>
+		</where>
+
+	</select>
+
+</mapper>
+	
